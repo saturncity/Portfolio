@@ -57,6 +57,7 @@ drift out of sync with the hostname it belongs to.
 | Linting                     | ESLint 9 with `eslint-plugin-astro` 1.7       | Version 1 is the last line that doesn't require the typescript-eslint packages as peers.                                           |
 | Formatting                  | Prettier 3.9 with `prettier-plugin-astro` 1.0 | Without the plugin, Prettier skips `.astro` files.                                                                                 |
 | Bundler                     | Vite, via Astro                               | Where the Tailwind plugin attaches.                                                                                                |
+| Deploys                     | Wrangler 4 on GitHub Actions                  | Builds once, ships every site from the same commit.                                                                                |
 
 ## Screenshots
 
@@ -160,16 +161,51 @@ sites.
 **Eight of nine sites are empty.** They render a title, a one-line description
 and the word `SCAFFOLD`. I'll fill them in one at a time.
 
-**Nothing is deployed.** There's no host config in this repo and no DNS pointing
-anywhere. Each app is a static build, so it needs one project per site pointed at
-`apps/<name>` with output `apps/<name>/dist`, then the subdomain bound to it.
-
-`lenzj.com` redirects to `lenzj.me`. That's a registrar or host redirect, so
-there's nothing in this repo to configure and nothing set up yet.
+**Nothing is live yet.** The pipeline exists, but the Cloudflare projects, the
+secrets and the domain bindings are still to do. See Deploying below.
 
 **No shared layout.** All nine pages repeat the same HTML shell. That's fine for
 nine near-identical scaffolds and it'll stop being fine as soon as two of them
 have real content, at which point the chrome moves into `packages/site`.
+
+## Deploying
+
+Every push to `main` runs `.github/workflows/deploy.yml`. One job installs, lints,
+format-checks and builds the whole workspace, then ships each site to its own
+Cloudflare Pages project with Wrangler.
+
+It's one job rather than a matrix on purpose. The checks gate the deploy, so a
+broken build ships nothing instead of shipping four sites and failing on the rest.
+
+`scripts/deploy-targets.mjs` reads the registry and prints what to ship, so the
+workflow holds no list of its own. A site with `deploy: false` never reaches CI,
+which is how `lenzj.art` keeps serving the Adobe Portfolio site that's already
+there.
+
+### One-time setup
+
+Create the Pages projects from your machine:
+
+```sh
+bunx wrangler login
+node scripts/deploy-targets.mjs | while read -r key project; do
+  bunx wrangler pages project create "$project" --production-branch main
+done
+```
+
+Add two repository secrets under Settings, Secrets and variables, Actions:
+
+| Secret                  | Where it comes from                                                                       |
+| ----------------------- | ----------------------------------------------------------------------------------------- |
+| `CLOUDFLARE_API_TOKEN`  | Cloudflare dashboard, My Profile, API Tokens. Needs the Cloudflare Pages edit permission. |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare dashboard sidebar, or `bunx wrangler whoami`.                                  |
+
+Then bind each custom domain to its project in the Pages dashboard. All four
+domains already use Cloudflare nameservers, so that's a dropdown rather than a
+DNS edit.
+
+`lenzj.com` redirects to `lenzj.me` through a Cloudflare Redirect Rule on the
+`lenzj.com` zone. Nothing in this repo configures it and it isn't set up yet.
 
 ## Contributing
 
