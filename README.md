@@ -78,7 +78,7 @@ root the site belongs to.
 ### Prerequisites
 
 - **Bun 1.2 or later.** I'm on 1.4.2.
-- **Node 20 or later.** Bun runs the scripts, but Astro's CLI starts with `#!/usr/bin/env node`, so Node executes the actual build.
+- **Node 22.12 or later.** Bun runs the scripts, but Astro's CLI starts with `#!/usr/bin/env node`, so Node executes the actual build, and Astro 7 refuses anything below 22.12.0. There's a `.node-version` file, so most CI picks this up on its own.
 
 ### Installation
 
