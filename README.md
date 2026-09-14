@@ -40,17 +40,17 @@ drift out of sync with the hostname it belongs to.
 
 ## Tech stack
 
-| Layer | Technology | Why it's here |
-| --- | --- | --- |
-| Package manager and runtime | Bun 1.4 | Installs the workspace and runs the scripts. Its isolated installs give each app only what it declares. |
-| Task runner | Turborepo 2.10 | Builds nine apps in one command and caches the ones that didn't change. |
-| Framework | Astro 7 | Static HTML per site with no client JavaScript shipped by default. |
-| Styling | Tailwind CSS 4 | Loaded through `@tailwindcss/vite`. The old `@astrojs/tailwind` integration is deprecated and its peers stop at Astro 5. |
-| Sitemaps | `@astrojs/sitemap` 3.7 | One sitemap per site, built from the `site` URL that `defineSite()` sets. |
-| Language | JavaScript, ESM | No TypeScript here. The config files are `.mjs`, everything else is `.js` or `.astro`. |
-| Linting | ESLint 9 with `eslint-plugin-astro` 1.7 | Version 1 is the last line that doesn't require the typescript-eslint packages as peers. |
-| Formatting | Prettier 3.9 with `prettier-plugin-astro` 1.0 | Without the plugin, Prettier skips `.astro` files. |
-| Bundler | Vite, via Astro | Where the Tailwind plugin attaches. |
+| Layer                       | Technology                                    | Why it's here                                                                                                            |
+| --------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Package manager and runtime | Bun 1.4                                       | Installs the workspace and runs the scripts. Its isolated installs give each app only what it declares.                  |
+| Task runner                 | Turborepo 2.10                                | Builds nine apps in one command and caches the ones that didn't change.                                                  |
+| Framework                   | Astro 7                                       | Static HTML per site with no client JavaScript shipped by default.                                                       |
+| Styling                     | Tailwind CSS 4                                | Loaded through `@tailwindcss/vite`. The old `@astrojs/tailwind` integration is deprecated and its peers stop at Astro 5. |
+| Sitemaps                    | `@astrojs/sitemap` 3.7                        | One sitemap per site, built from the `site` URL that `defineSite()` sets.                                                |
+| Language                    | JavaScript, ESM                               | No TypeScript here. The config files are `.mjs`, everything else is `.js` or `.astro`.                                   |
+| Linting                     | ESLint 9 with `eslint-plugin-astro` 1.7       | Version 1 is the last line that doesn't require the typescript-eslint packages as peers.                                 |
+| Formatting                  | Prettier 3.9 with `prettier-plugin-astro` 1.0 | Without the plugin, Prettier skips `.astro` files.                                                                       |
+| Bundler                     | Vite, via Astro                               | Where the Tailwind plugin attaches.                                                                                      |
 
 ## Screenshots
 
