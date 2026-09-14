@@ -185,6 +185,19 @@ finish() {
 
 TOTAL_STAGES=6
 
+# Every stage waits on you. Without a terminal on stdin each read returns EOF
+# straight away, so the wizard would sprint through its prompts and fail at the
+# first one that needs a value. Refuse to start instead.
+if [[ ! -t 0 ]]; then
+  printf '\n  %sThis wizard needs an interactive terminal.%s\n\n' "$BOLD" "$RESET"
+  printf '  Stdin is not a TTY here, so every prompt would read empty and the run\n'
+  printf '  would stop at the token step without asking you anything.\n\n'
+  printf '  Open Terminal (or your editor terminal) and run it there:\n\n'
+  printf '      cd %s\n' "$(pwd)"
+  printf '      ./scripts/setup-cloudflare.sh\n\n'
+  exit 1
+fi
+
 REPO="saturncity/portfolio"
 TARGETS=$(node "$(dirname "$0")/deploy-targets.mjs")
 
