@@ -40,6 +40,10 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           set -euo pipefail
+          if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
+            echo "::notice::CLOUDFLARE_API_TOKEN is not set, so nothing was deployed. The build above still ran. See the Deploying section of the README for the one-time setup."
+            exit 0
+          fi
           node scripts/deploy-targets.mjs > /tmp/targets
           cat /tmp/targets
           while read -r key project; do
