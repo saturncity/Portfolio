@@ -279,6 +279,9 @@ print(max(m,key=lambda z:len(z['name']))['id'] if m else '')
     "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/${project}/domains" \
     -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" \
     --data "{\"name\":\"${host}\"}" || echo 000)
+  # 8000018 is "you have already added this custom domain", which is the
+  # normal answer on a re-run and means the domain is attached, not broken.
+  grep -q '8000018' /tmp/cf-one.json 2>/dev/null && attach="200"
 
   dns="skipped"
   if [[ -n "$zone_id" ]]; then
@@ -286,6 +289,7 @@ print(max(m,key=lambda z:len(z['name']))['id'] if m else '')
       "https://api.cloudflare.com/client/v4/zones/${zone_id}/dns_records" \
       -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" \
       --data "{\"type\":\"CNAME\",\"name\":\"${host}\",\"content\":\"${project}.pages.dev\",\"proxied\":true}" || echo 000)
+    # 81053/81057 mean the record is already there, which is equally fine.
     grep -q '81053\|81057\|already exists' /tmp/cf-one.json 2>/dev/null && dns="200"
   fi
 
