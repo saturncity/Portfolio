@@ -246,29 +246,47 @@ pause "Continue"
 
 # ── 4. Attach the custom domains ──────────────────────────────────────────
 stage "Attach the custom domains"
-say "Trying the Cloudflare API for each site. Anything it can't do is listed"
-say "at the end as a manual step, so you'll know exactly what's left."
+say "Two calls per site: attach the hostname to its Pages project, then add the"
+say "DNS record. The API won't create that record for you the way the dashboard"
+say "does, which is why the token needed Zone DNS Edit."
+curl -s "https://api.cloudflare.com/client/v4/zones?per_page=50" \
+  -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -o /tmp/cf-zones.json || true
 BOUND=0
 while read -r _key project host; do
-  code=$(curl -s -o /tmp/cf-domain.json -w '%{http_code}' -X POST \
+  zone_id=$(python3 -c "
+import json,sys
+host=sys.argv[1]
+try: zones=json.load(open('/tmp/cf-zones.json')).get('result') or []
+except Exception: zones=[]
+m=[z for z in zones if host==z['name'] or host.endswith('.'+z['name'])]
+print(max(m,key=lambda z:len(z['name']))['id'] if m else '')
+" "$host" 2>/dev/null || echo "")
+
+  attach=$(curl -s -o /tmp/cf-one.json -w '%{http_code}' -X POST \
     "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/${project}/domains" \
-    -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
-    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" \
     --data "{\"name\":\"${host}\"}" || echo 000)
-  if [[ "$code" == "200" || "$code" == "201" ]]; then
-    printf '  %s✓%s %s\n' "$GREEN" "$RESET" "$host"
-    BOUND=$((BOUND + 1))
-  elif grep -q 'already exists\|8000073' /tmp/cf-domain.json 2>/dev/null; then
-    printf '  %s✓%s %s (already attached)\n' "$GREEN" "$RESET" "$host"
+
+  dns="skipped"
+  if [[ -n "$zone_id" ]]; then
+    dns=$(curl -s -o /tmp/cf-one.json -w '%{http_code}' -X POST \
+      "https://api.cloudflare.com/client/v4/zones/${zone_id}/dns_records" \
+      -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H "Content-Type: application/json" \
+      --data "{\"type\":\"CNAME\",\"name\":\"${host}\",\"content\":\"${project}.pages.dev\",\"proxied\":true}" || echo 000)
+    grep -q '81053\|81057\|already exists' /tmp/cf-one.json 2>/dev/null && dns="200"
+  fi
+
+  if [[ "$attach" =~ ^(200|201|409)$ && "$dns" == "200" ]]; then
+    printf '  %s✓%s %-26s -> %s\n' "$GREEN" "$RESET" "$host" "${project}.pages.dev"
     BOUND=$((BOUND + 1))
   else
-    printf '  %s✗%s %s (HTTP %s)\n' "$YELLOW" "$RESET" "$host" "$code"
-    SKIPPED+=("attach $host: Pages project $project, Custom domains, Set up a custom domain")
+    printf '  %s✗%s %-26s attach=%s dns=%s\n' "$YELLOW" "$RESET" "$host" "$attach" "$dns"
+    SKIPPED+=("$host: add a proxied CNAME to ${project}.pages.dev, then attach it under the Pages project's Custom domains")
   fi
 done <<< "$TARGETS"
-rm -f /tmp/cf-domain.json
+rm -f /tmp/cf-zones.json /tmp/cf-one.json
 say ""
-say "Attached $BOUND of 8."
+say "Configured $BOUND of 8. Certificates take a few minutes to go active."
 pause "Continue"
 
 # ── 5. Redirect lenzj.com ─────────────────────────────────────────────────
