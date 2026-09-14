@@ -189,9 +189,16 @@ Create the Pages projects from your machine:
 ```sh
 bunx wrangler login
 node scripts/deploy-targets.mjs | while read -r key project; do
-  bunx wrangler pages project create "$project" --production-branch main
+  bunx wrangler pages project create "$project" --production-branch main --force
 done
 ```
+
+`--force` is load-bearing. Without it, wrangler delegates project creation to the
+newer Workers-based Pages, which tries to reconfigure the app by running
+`astro add cloudflare` through npm. npm doesn't understand bun's `workspace:*`
+protocol, so it dies on `@lenzj/site` and creates nothing. `--force` creates the
+project directly and is only needed this once. `wrangler pages deploy`, which is
+what CI runs, needs no flag.
 
 Add two repository secrets under Settings, Secrets and variables, Actions:
 
