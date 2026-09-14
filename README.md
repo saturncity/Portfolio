@@ -184,7 +184,20 @@ there.
 
 ### One-time setup
 
-Create the Pages projects from your machine:
+There's a wizard for the rest of it. It checks your logins, walks you through
+creating the API token, writes both GitHub secrets, attaches the eight custom
+domains over the API, talks you through the `lenzj.com` redirect, then triggers
+a real CI run so you can see the pipeline work:
+
+```sh
+./scripts/setup-cloudflare.sh
+```
+
+It's safe to stop with Ctrl-C and re-run. Anything it couldn't do is listed at
+the end as an explicit manual step. The API token is never written to disk, so
+a re-run asks for it again.
+
+The Pages projects themselves already exist. If you ever need to recreate them:
 
 ```sh
 bunx wrangler login
