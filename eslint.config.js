@@ -6,8 +6,8 @@ export default [
   js.configs.recommended,
   ...astro.configs.recommended,
   {
-    // Build scripts run in node, not the browser.
-    files: ["scripts/**/*.mjs"],
-    languageOptions: { globals: { console: "readonly" } },
+    // Build-time code runs in node, not the browser.
+    files: ["scripts/**/*.mjs", "packages/site/config.js"],
+    languageOptions: { globals: { console: "readonly", URL: "readonly" } },
   },
 ];

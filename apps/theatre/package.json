@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview"
+    "build": "astro build"
   },
   "dependencies": {
     "@lenzj/site": "workspace:*",

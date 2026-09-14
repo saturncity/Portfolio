@@ -32,7 +32,9 @@ rest of this file is for you.
   of writing a hostname or a port number anywhere else.
 - Every directory under `apps/` is its own deployable site on its own subdomain.
   Don't merge them into one app with URL paths. The split is the point.
-- Anything dynamic uses MongoDB. Nothing does yet.
+- The shared shell is `packages/site/Scaffold.astro`. A site with real content
+  fills its slot; a site that outgrows it writes its own page and stops
+  importing it. Don't grow Scaffold props to cover one site's special case.
 - Run `bun run lint`, `bun run format:check` and `bun run build` before you say
   something works.
 - Don't add a dependency for what a few lines of JavaScript would do.

@@ -44,16 +44,6 @@ jobs:
       - run: bun run format:check
       - run: bun run build
 
-      - name: Note that a pull request does not deploy
-        if: github.event_name == 'pull_request'
-        run: |
-          {
-            echo "### Checked, not deployed"
-            echo
-            echo "Pull requests run install, lint, format and build. Deploys only"
-            echo "happen on \`main\`, so merging this is what ships it."
-          } >> "$GITHUB_STEP_SUMMARY"
-
       - name: Deploy every site from this commit
         if: github.event_name != 'pull_request'
         env:
@@ -61,17 +51,6 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           set -euo pipefail
-          if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
-            {
-              echo "### Nothing deployed"
-              echo
-              echo "\`CLOUDFLARE_API_TOKEN\` is not set, so the deploy step was skipped."
-              echo "Everything before it (install, lint, format, build) still ran."
-              echo "Run \`./scripts/setup-cloudflare.sh\` to finish the setup."
-            } >> "$GITHUB_STEP_SUMMARY"
-            echo "::notice::CLOUDFLARE_API_TOKEN is not set, so nothing was deployed."
-            exit 0
-          fi
           node scripts/deploy-targets.mjs > /tmp/targets
           {
             echo "### Deployed \`${GITHUB_SHA:0:7}\` to every site"

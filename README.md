@@ -10,9 +10,8 @@
 My personal sites, built as one deployable app per subdomain instead of one site with paths.
 
 > [!WARNING]
-> This is early. One of the nine sites has real content, the other eight are
-> scaffolds that render a heading and a status line. Nothing is deployed yet, so
-> every `lenzj.*` URL below points at a domain I haven't pushed to.
+> This is early. All nine sites are live, but only `lenzj.me` has real content.
+> The other eight are scaffolds that render a heading and a status line.
 
 <div align="center">
 
@@ -45,19 +44,18 @@ drift out of sync with the hostname it belongs to.
 
 ## Tech stack
 
-| Layer                       | Technology                                    | Why it's here                                                                                                                      |
-| --------------------------- | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| Package manager and runtime | Bun 1.4                                       | Installs the workspace and runs the scripts. Its isolated installs give each app only what it declares.                            |
-| Task runner                 | Turborepo 2.10                                | Builds nine apps in one command and caches the ones that didn't change.                                                            |
-| Framework                   | Astro 7                                       | Static HTML per site with no client JavaScript shipped by default.                                                                 |
-| Styling                     | Tailwind CSS 4                                | Loaded through `@tailwindcss/vite`. The old `@astrojs/tailwind` integration is deprecated and its peers stop at Astro 5.           |
-| Sitemaps                    | `@astrojs/sitemap` 3.7                        | One sitemap per site, built from the `site` URL that `defineSite()` sets.                                                          |
-| Database                    | MongoDB                                       | Where anything dynamic goes when I add it. Nothing uses one today, so there's no driver installed and no connection string to set. |
-| Language                    | JavaScript, ESM                               | No TypeScript here. The config files are `.mjs`, everything else is `.js` or `.astro`.                                             |
-| Linting                     | ESLint 9 with `eslint-plugin-astro` 1.7       | Version 1 is the last line that doesn't require the typescript-eslint packages as peers.                                           |
-| Formatting                  | Prettier 3.9 with `prettier-plugin-astro` 1.0 | Without the plugin, Prettier skips `.astro` files.                                                                                 |
-| Bundler                     | Vite, via Astro                               | Where the Tailwind plugin attaches.                                                                                                |
-| Deploys                     | Wrangler 4 on GitHub Actions                  | Builds once, ships every site from the same commit.                                                                                |
+| Layer                       | Technology                                    | Why it's here                                                                                                            |
+| --------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Package manager and runtime | Bun 1.4                                       | Installs the workspace and runs the scripts. Its isolated installs give each app only what it declares.                  |
+| Task runner                 | Turborepo 2.10                                | Builds nine apps in one command and caches the ones that didn't change.                                                  |
+| Framework                   | Astro 7                                       | Static HTML per site with no client JavaScript shipped by default.                                                       |
+| Styling                     | Tailwind CSS 4                                | Loaded through `@tailwindcss/vite`. The old `@astrojs/tailwind` integration is deprecated and its peers stop at Astro 5. |
+| Sitemaps                    | `@astrojs/sitemap` 3.7                        | One sitemap per site, built from the `site` URL that `defineSite()` sets.                                                |
+| Language                    | JavaScript, ESM                               | No TypeScript here. The config files are `.mjs`, everything else is `.js` or `.astro`.                                   |
+| Linting                     | ESLint 9 with `eslint-plugin-astro` 1.7       | Version 1 is the last line that doesn't require the typescript-eslint packages as peers.                                 |
+| Formatting                  | Prettier 3.9 with `prettier-plugin-astro` 1.0 | Without the plugin, Prettier skips `.astro` files.                                                                       |
+| Bundler                     | Vite, via Astro                               | Where the Tailwind plugin attaches.                                                                                      |
+| Deploys                     | Wrangler 4 on GitHub Actions                  | Builds once, ships every site from the same commit.                                                                      |
 
 ## Screenshots
 
@@ -138,7 +136,9 @@ There's no test suite. For nine static pages I didn't think one earned its keep.
 ├── packages/
 │   └── site/               shared across every app
 │       ├── sites.js        the registry: hosts, ports, clusters, titles
-│       ├── config.js       defineSite(), builds each app's Astro config
+│       ├── config.js       defineSite(), builds each app's Astro config,
+│       │                   and emits _headers and robots.txt into dist
+│       ├── Scaffold.astro  the HTML shell every site renders through
 │       └── global.css      one line, imports Tailwind
 ├── docs/assets/            README screenshots
 ├── eslint.config.js
@@ -146,27 +146,17 @@ There's no test suite. For nine static pages I didn't think one earned its keep.
 ```
 
 Each app holds three files: a `package.json`, an `astro.config.mjs` that's a
-one-line call to `defineSite()`, and a page.
+one-line call to `defineSite()`, and a page that's a one-line call to
+`<Scaffold>`. A site with real content fills the scaffold's slot, or stops
+importing it altogether.
 
 ## Known issues
-
-**Cross-site view transitions don't fire.** `apps/me/src/pages/index.astro` sets
-`<meta name="view-transition" content="same-origin">`, and the footer claims
-`TRANSITIONS: ACTIVE`. Cross-document view transitions only run between
-same-origin documents, and `lenzj.me` to `scuba.lenzj.me` crosses origins, so
-nothing animates. It's the cost of picking subdomains over paths. I need to
-either drop the meta tag and fix the footer, or accept plain navigation between
-sites.
 
 **Eight of nine sites are empty.** They render a title, a one-line description
 and the word `SCAFFOLD`. I'll fill them in one at a time.
 
 **Nothing is live yet.** The pipeline exists, but the Cloudflare projects, the
 secrets and the domain bindings are still to do. See Deploying below.
-
-**No shared layout.** All nine pages repeat the same HTML shell. That's fine for
-nine near-identical scaffolds and it'll stop being fine as soon as two of them
-have real content, at which point the chrome moves into `packages/site`.
 
 ## Deploying
 
@@ -184,25 +174,14 @@ there.
 
 ### One-time setup
 
-There's a wizard for the rest of it. It checks your logins, walks you through
-creating the API token, writes both GitHub secrets, points the eight custom
-domains at their projects, talks you through the `lenzj.com` redirect, then
-triggers a real CI run so you can see the pipeline work:
-
-```sh
-./scripts/setup-cloudflare.sh
-```
-
-It's safe to stop with Ctrl-C and re-run. Anything it couldn't do is listed at
-the end as an explicit manual step. The API token is never written to disk, so
-a re-run asks for it again.
-
-The Pages projects themselves already exist. If you ever need to recreate them:
+This is done. The Pages projects exist, both secrets are set and the custom
+domains are attached. If you ever need to recreate them:
 
 ```sh
 bunx wrangler login
-node scripts/deploy-targets.mjs | while read -r key project; do
+node scripts/deploy-targets.mjs | while read -r key project host; do
   bunx wrangler pages project create "$project" --production-branch main --force
+  # then attach $host to the project under its Custom domains
 done
 ```
 
@@ -213,16 +192,15 @@ protocol, so it dies on `@lenzj/site` and creates nothing. `--force` creates the
 project directly and is only needed this once. `wrangler pages deploy`, which is
 what CI runs, needs no flag.
 
-Add two repository secrets under Settings, Secrets and variables, Actions:
+The two repository secrets live under Settings, Secrets and variables, Actions:
 
 | Secret                  | Where it comes from                                                                       |
 | ----------------------- | ----------------------------------------------------------------------------------------- |
 | `CLOUDFLARE_API_TOKEN`  | Cloudflare dashboard, My Profile, API Tokens. Needs the Cloudflare Pages edit permission. |
 | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare dashboard sidebar, or `bunx wrangler whoami`.                                  |
 
-Then bind each custom domain to its project in the Pages dashboard. All four
-domains already use Cloudflare nameservers, so that's a dropdown rather than a
-DNS edit.
+All four domains use Cloudflare nameservers, so binding one is a dropdown in
+the Pages dashboard rather than a DNS edit.
 
 `lenzj.com` redirects to `lenzj.me` through a Cloudflare Redirect Rule on the
 `lenzj.com` zone. Nothing in this repo configures it and it isn't set up yet.
@@ -237,8 +215,9 @@ site would need. HSTS, `nosniff`, `frame-ancestors 'none'` and a closed
 
 `robots.txt` welcomes people and search engines and blocks 24 named crawlers
 that collect for model training, which is the same stance AGENTS.md takes in
-prose. Both files are generated per site by `scripts/gen-public.mjs`, so the
-sitemap URL always matches the host. Re-run it after editing the registry.
+prose. Both files are written into each site's `dist` by `defineSite()` at build
+time, so the sitemap URL can't drift from the host and neither file has to be
+kept in sync by hand.
 
 CI runs with `permissions: contents: read` and nothing else, and every action is
 pinned to a commit SHA rather than a moving tag, so a compromised upstream tag

@@ -6,7 +6,8 @@
   "exports": {
     "./sites": "./sites.js",
     "./config": "./config.js",
-    "./global.css": "./global.css"
+    "./global.css": "./global.css",
+    "./Scaffold.astro": "./Scaffold.astro"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
