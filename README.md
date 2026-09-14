@@ -1,159 +1,53 @@
-# Turborepo starter
+# lenzj-portfolios
 
-This Turborepo starter is maintained by the Turborepo core team.
+A network of small Astro sites, **one deployable site per subdomain** — not one site
+with `/scuba`-style paths. Each app in `apps/` builds and deploys independently to its
+own host.
 
-## Using this example
+## The network
 
-Run the following command:
+| App | Host | Dev port |
+| --- | --- | --- |
+| `me` | lenzj.com *(root + directory)* | 3001 |
+| `scuba` | scuba.lenzj.com | 3002 |
+| `safety` | safety.lenzj.com | 3003 |
+| `dev` | lenzj.dev *(root)* | 3004 |
+| `software` | software.lenzj.dev | 3005 |
+| `robotics` | robotics.lenzj.dev | 3006 |
+| `engineering` | engineering.lenzj.dev | 3007 |
+| `art` | lenzj.art *(root)* | 3008 |
+| `theatre` | theatre.lenzj.art | 3009 |
 
-```sh
-npx create-turbo@latest
-```
+## Single source of truth
 
-## What's inside?
+`packages/site/sites.js` is the **only** place hosts and ports are written down.
+Everything else derives from it:
 
-This Turborepo includes the following packages/apps:
+- `urlFor(key)` returns `http://localhost:<port>` in dev and `https://<host>` in
+  production, so cross-site links work in both without editing anything.
+- `defineSite(key)` (in `packages/site/config.js`) builds each app's Astro config —
+  its dev port, its canonical `site` URL, and Tailwind — so a port can never drift
+  out of sync with the table above.
 
-### Apps and Packages
+Adding a site: add a row to `sites.js`, then create `apps/<key>/` with a
+`package.json`, a one-line `astro.config.mjs` calling `defineSite("<key>")`, and a page.
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+## Commands
 
 ```sh
-cd my-turborepo
-turbo build
+pnpm install
+pnpm dev                      # all nine, each on its own port
+pnpm build                    # all nine to apps/*/dist
+pnpm dev --filter=@lenzj/scuba   # just one
 ```
 
-Without global `turbo`, use your package manager:
+## Deploying
 
-```sh
-cd my-turborepo
-npx turbo build
-pnpm dlx turbo build
-pnpm exec turbo build
-```
+Each app is a static build with its own output — point one host/project per app at
+`apps/<key>` with build `pnpm build --filter=@lenzj/<key>` and output `apps/<key>/dist`,
+then bind that project to its subdomain. DNS and host setup are done in your
+provider's dashboard; nothing in this repo assumes a particular host.
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+## Stack
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo build --filter=docs
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo dev
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo dev
-pnpm exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo dev --filter=web
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-pnpm exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-pnpm exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+Astro 7, Tailwind 4 (via `@tailwindcss/vite`), Turborepo, pnpm workspaces.

@@ -1,0 +1,53 @@
+---
+import "@lenzj/site/global.css";
+import { clusters, urlFor } from "@lenzj/site/sites";
+---
+
+<!doctype html>
+<html lang="en" class="bg-neutral-950 text-neutral-100 font-mono antialiased">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SYSTEM_STATUS // LENZJ.COM</title>
+    <meta name="view-transition" content="same-origin" />
+  </head>
+  <body class="p-6 max-w-3xl mx-auto space-y-6">
+    <header class="border border-neutral-800 p-4 bg-neutral-900/50 flex justify-between items-center text-xs">
+      <div>
+        <span class="text-emerald-500 font-bold">[NODE_ONLINE]</span>
+        <span class="text-neutral-400 ml-2">HOST: lenzj.com</span>
+      </div>
+      <span class="text-neutral-500">SYS_VER 0.1.0-ALPHA</span>
+    </header>
+
+    <main class="border border-neutral-800 p-6 space-y-4">
+      <h1 class="text-sm font-bold text-neutral-200 uppercase tracking-wider">
+        // Network Directory
+      </h1>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+        {Object.entries(clusters).map(([cluster, members]) => (
+          <div class="border border-neutral-800/80 p-3 bg-neutral-900/30">
+            <div class="text-neutral-400 font-bold mb-2">
+              {cluster.toUpperCase()} CLUSTER
+            </div>
+            <ul class="space-y-1">
+              {members.map((s) => (
+                <li>
+                  <a href={urlFor(s.key)} class="hover:text-emerald-400">
+                    {s.root ? `[root] ${s.host}` : s.host}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </main>
+
+    <footer class="text-xs text-neutral-500 border-t border-neutral-800 pt-4 flex justify-between">
+      <span>STATUS: STAGING_TEST</span>
+      <span>TRANSITIONS: ACTIVE</span>
+    </footer>
+  </body>
+</html>

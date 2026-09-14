@@ -36,3 +36,12 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# Astro
+.astro/
+
+# IDE
+.idea/
+
+# Local reference material (old repo snapshots, scratch)
+reference/
