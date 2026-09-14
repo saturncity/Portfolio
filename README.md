@@ -36,7 +36,7 @@ That file is the whole trick. `packages/site/sites.js` holds the table, and both
 the dev server ports and the production URLs are read from it, so a port can't
 drift out of sync with the hostname it belongs to.
 
-- Nine independently deployable sites across `lenzj.com`, `lenzj.dev` and `lenzj.art`
+- Nine independently deployable sites across `lenzj.me`, `lenzj.dev` and `lenzj.art`
 - Hosts and ports written down once, in `packages/site/sites.js`
 - `urlFor()` returns a `localhost` port in dev and an `https://` subdomain in production, so cross-site links work in both without an edit
 - Each site generates a sitemap scoped to its own origin, because nine origins can't share one
@@ -59,11 +59,11 @@ drift out of sync with the hostname it belongs to.
 
 ## Screenshots
 
-![The lenzj.com directory page](docs/assets/directory.png)
+![The lenzj.me directory page](docs/assets/directory.png)
 
-The root site at `lenzj.com`. Every hostname in those three columns comes from
+The root site at `lenzj.me`. Every hostname in those three columns comes from
 the registry, and this is a production build, which is why they read as
-`scuba.lenzj.com` rather than `localhost:3002`. Run `bun run dev` and the same
+`scuba.lenzj.me` rather than `localhost:3002`. Run `bun run dev` and the same
 markup renders the localhost ports instead.
 
 ![A scaffolded site](docs/assets/site-scaffold.png)
@@ -124,9 +124,9 @@ There's no test suite. For nine static pages I didn't think one earned its keep.
 ```
 .
 ├── apps/                   one Astro app per host, nine of them
-│   ├── me/                 lenzj.com, the directory page, the only real content
-│   ├── scuba/              scuba.lenzj.com
-│   ├── safety/             safety.lenzj.com
+│   ├── me/                 lenzj.me, the directory page, the only real content
+│   ├── scuba/              scuba.lenzj.me
+│   ├── safety/             safety.lenzj.me
 │   ├── dev/                lenzj.dev
 │   ├── software/           software.lenzj.dev
 │   ├── robotics/           robotics.lenzj.dev
@@ -151,7 +151,7 @@ one-line call to `defineSite()`, and a page.
 **Cross-site view transitions don't fire.** `apps/me/src/pages/index.astro` sets
 `<meta name="view-transition" content="same-origin">`, and the footer claims
 `TRANSITIONS: ACTIVE`. Cross-document view transitions only run between
-same-origin documents, and `lenzj.com` to `scuba.lenzj.com` crosses origins, so
+same-origin documents, and `lenzj.me` to `scuba.lenzj.me` crosses origins, so
 nothing animates. It's the cost of picking subdomains over paths. I need to
 either drop the meta tag and fix the footer, or accept plain navigation between
 sites.
@@ -162,6 +162,10 @@ and the word `SCAFFOLD`. I'll fill them in one at a time.
 **Nothing is deployed.** There's no host config in this repo and no DNS pointing
 anywhere. Each app is a static build, so it needs one project per site pointed at
 `apps/<name>` with output `apps/<name>/dist`, then the subdomain bound to it.
+
+I also own `lenzj.com` and want it redirecting to `lenzj.me`. That's a registrar
+or host redirect, so there's nothing in this repo to configure and nothing set up
+yet.
 
 **No shared layout.** All nine pages repeat the same HTML shell. That's fine for
 nine near-identical scaffolds and it'll stop being fine as soon as two of them

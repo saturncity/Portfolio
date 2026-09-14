@@ -1,6 +1,8 @@
 ---
 import "@lenzj/site/global.css";
-import { clusters, urlFor } from "@lenzj/site/sites";
+import { bySite, clusters, urlFor } from "@lenzj/site/sites";
+
+const self = bySite.me;
 ---
 
 <!doctype html>
@@ -8,14 +10,14 @@ import { clusters, urlFor } from "@lenzj/site/sites";
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SYSTEM_STATUS // LENZJ.COM</title>
+    <title>SYSTEM_STATUS // {self.title}</title>
     <meta name="view-transition" content="same-origin" />
   </head>
   <body class="p-6 max-w-3xl mx-auto space-y-6">
     <header class="border border-neutral-800 p-4 bg-neutral-900/50 flex justify-between items-center text-xs">
       <div>
         <span class="text-emerald-500 font-bold">[NODE_ONLINE]</span>
-        <span class="text-neutral-400 ml-2">HOST: lenzj.com</span>
+        <span class="text-neutral-400 ml-2">HOST: {self.host}</span>
       </div>
       <span class="text-neutral-500">SYS_VER 0.1.0-ALPHA</span>
     </header>
