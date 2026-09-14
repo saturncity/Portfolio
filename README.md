@@ -242,7 +242,14 @@ sitemap URL always matches the host. Re-run it after editing the registry.
 
 CI runs with `permissions: contents: read` and nothing else, and every action is
 pinned to a commit SHA rather than a moving tag, so a compromised upstream tag
-can't change what runs. Dependabot moves those pins monthly.
+can't change what runs. Dependabot moves those pins monthly. Pull requests run
+the same checks but never deploy, so a bump proves itself green before it
+reaches `main`.
+
+JavaScript dependencies are updated by hand with `bun update`, because
+Dependabot edits `package.json` without writing `bun.lock` and every such PR
+failed `bun install --frozen-lockfile`. Keeping the lockfile frozen is worth
+more than the automation.
 
 ## Contributing
 

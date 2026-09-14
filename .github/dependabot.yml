@@ -1,16 +1,14 @@
 version: 2
 updates:
-  # Actions are pinned to commit SHAs, so this is what moves them when the
-  # upstream tag moves. Without it the pins silently rot.
+  # Actions are pinned to commit SHAs, so this is what moves them when a new
+  # release lands. Without it the pins silently rot.
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
 
-  - package-ecosystem: npm
-    directory: /
-    schedule:
-      interval: monthly
-    groups:
-      all:
-        patterns: ["*"]
+  # No npm entry on purpose. Dependabot edits package.json but doesn't write
+  # bun.lock, so every dependency PR failed `bun install --frozen-lockfile`.
+  # Loosening that flag would cost more than the automation is worth, so JS
+  # dependencies are updated by hand with `bun update`. Security alerts and
+  # automated security fixes are separate and still switched on.
