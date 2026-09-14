@@ -46,7 +46,7 @@ jobs:
           fi
           node scripts/deploy-targets.mjs > /tmp/targets
           cat /tmp/targets
-          while read -r key project; do
+          while read -r key project host; do
             echo "::group::$project"
             bunx wrangler pages deploy "apps/$key/dist" \
               --project-name="$project" \
