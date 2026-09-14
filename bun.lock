@@ -13,14 +13,6 @@
         "turbo": "^2.10.8",
       },
     },
-    "apps/art": {
-      "name": "@lenzj/art",
-      "version": "0.1.0",
-      "dependencies": {
-        "@lenzj/site": "workspace:*",
-        "astro": "^7.1.6",
-      },
-    },
     "apps/dev": {
       "name": "@lenzj/dev",
       "version": "0.1.0",
@@ -39,6 +31,14 @@
     },
     "apps/me": {
       "name": "@lenzj/me",
+      "version": "0.1.0",
+      "dependencies": {
+        "@lenzj/site": "workspace:*",
+        "astro": "^7.1.6",
+      },
+    },
+    "apps/photography": {
+      "name": "@lenzj/photography",
       "version": "0.1.0",
       "dependencies": {
         "@lenzj/site": "workspace:*",
@@ -312,13 +312,13 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
 
-    "@lenzj/art": ["@lenzj/art@workspace:apps/art"],
-
     "@lenzj/dev": ["@lenzj/dev@workspace:apps/dev"],
 
     "@lenzj/engineering": ["@lenzj/engineering@workspace:apps/engineering"],
 
     "@lenzj/me": ["@lenzj/me@workspace:apps/me"],
+
+    "@lenzj/photography": ["@lenzj/photography@workspace:apps/photography"],
 
     "@lenzj/robotics": ["@lenzj/robotics@workspace:apps/robotics"],
 

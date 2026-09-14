@@ -40,6 +40,7 @@ drift out of sync with the hostname it belongs to.
 - Hosts and ports written down once, in `packages/site/sites.js`
 - `urlFor()` returns a `localhost` port in dev and an `https://` subdomain in production, so cross-site links work in both without an edit
 - Each site generates a sitemap scoped to its own origin, because nine origins can't share one
+- `lenzj.art` is photography, at the domain root rather than on a subdomain, because that's the practice the name is for
 - Static output, no server to run
 
 ## Tech stack
@@ -127,12 +128,12 @@ There's no test suite. For nine static pages I didn't think one earned its keep.
 │   ├── me/                 lenzj.me, the directory page, the only real content
 │   ├── scuba/              scuba.lenzj.me
 │   ├── safety/             safety.lenzj.me
+│   ├── theatre/            theatre.lenzj.me
 │   ├── dev/                lenzj.dev
 │   ├── software/           software.lenzj.dev
 │   ├── robotics/           robotics.lenzj.dev
 │   ├── engineering/        engineering.lenzj.dev
-│   ├── art/                lenzj.art
-│   └── theatre/            theatre.lenzj.art
+│   └── photography/        lenzj.art, the root of the domain, not a subdomain
 ├── packages/
 │   └── site/               shared across every app
 │       ├── sites.js        the registry: hosts, ports, clusters, titles
@@ -163,9 +164,8 @@ and the word `SCAFFOLD`. I'll fill them in one at a time.
 anywhere. Each app is a static build, so it needs one project per site pointed at
 `apps/<name>` with output `apps/<name>/dist`, then the subdomain bound to it.
 
-I also own `lenzj.com` and want it redirecting to `lenzj.me`. That's a registrar
-or host redirect, so there's nothing in this repo to configure and nothing set up
-yet.
+`lenzj.com` redirects to `lenzj.me`. That's a registrar or host redirect, so
+there's nothing in this repo to configure and nothing set up yet.
 
 **No shared layout.** All nine pages repeat the same HTML shell. That's fine for
 nine near-identical scaffolds and it'll stop being fine as soon as two of them

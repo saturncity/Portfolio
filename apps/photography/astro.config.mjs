@@ -1,3 +1,3 @@
 import { defineSite } from "@lenzj/site/config";
 
-export default defineSite("art");
+export default defineSite("photography");
