@@ -1,9 +1,10 @@
 ```
-  ____   ___  ____ _____ _____ ___  _     ___ ___
- |  _ \ / _ \|  _ \_   _|  ___/ _ \| |   |_ _/ _ \
- | |_) | | | | |_) || | | |_ | | | | |    | | | | |
- |  __/| |_| |  _ < | | |  _|| |_| | |___ | | |_| |
- |_|    \___/|_| \_\|_| |_|   \___/|_____|___\___/
+██████╗   ██████╗  ██████╗  ████████╗ ███████╗  ██████╗  ██╗      ██╗  ██████╗
+██╔══██╗ ██╔═══██╗ ██╔══██╗ ╚══██╔══╝ ██╔════╝ ██╔═══██╗ ██║      ██║ ██╔═══██╗
+██████╔╝ ██║   ██║ ██████╔╝    ██║    █████╗   ██║   ██║ ██║      ██║ ██║   ██║
+██╔═══╝  ██║   ██║ ██╔══██╗    ██║    ██╔══╝   ██║   ██║ ██║      ██║ ██║   ██║
+██║      ╚██████╔╝ ██║  ██║    ██║    ██║      ╚██████╔╝ ███████╗ ██║ ╚██████╔╝
+╚═╝       ╚═════╝  ╚═╝  ╚═╝    ╚═╝    ╚═╝       ╚═════╝  ╚══════╝ ╚═╝  ╚═════╝
 ```
 
 My personal sites, built as one deployable app per subdomain instead of one site with paths.
@@ -13,13 +14,16 @@ My personal sites, built as one deployable app per subdomain instead of one site
 > scaffolds that render a heading and a status line. Nothing is deployed yet, so
 > every `lenzj.*` URL below points at a domain I haven't pushed to.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Astro-BC52EE?style=for-the-badge&logo=astro&logoColor=white" alt="Astro">
-  <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS">
-  <img src="https://img.shields.io/badge/Bun-FBF0DF?style=for-the-badge&logo=bun&logoColor=black" alt="Bun">
-  <img src="https://img.shields.io/badge/Turborepo-EF4444?style=for-the-badge&logo=turborepo&logoColor=white" alt="Turborepo">
-  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript">
-</p>
+<div align="center">
+
+![Astro](https://img.shields.io/badge/Astro-BC52EE?style=for-the-badge&logo=astro&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![Bun](https://img.shields.io/badge/Bun-FBF0DF?style=for-the-badge&logo=bun&logoColor=black)
+![Turborepo](https://img.shields.io/badge/Turborepo-EF4444?style=for-the-badge&logo=turborepo&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![Last commit](https://img.shields.io/github/last-commit/saturncity/portfolio?style=for-the-badge)
+
+</div>
 
 ## About
 
@@ -40,17 +44,18 @@ drift out of sync with the hostname it belongs to.
 
 ## Tech stack
 
-| Layer                       | Technology                                    | Why it's here                                                                                                            |
-| --------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Package manager and runtime | Bun 1.4                                       | Installs the workspace and runs the scripts. Its isolated installs give each app only what it declares.                  |
-| Task runner                 | Turborepo 2.10                                | Builds nine apps in one command and caches the ones that didn't change.                                                  |
-| Framework                   | Astro 7                                       | Static HTML per site with no client JavaScript shipped by default.                                                       |
-| Styling                     | Tailwind CSS 4                                | Loaded through `@tailwindcss/vite`. The old `@astrojs/tailwind` integration is deprecated and its peers stop at Astro 5. |
-| Sitemaps                    | `@astrojs/sitemap` 3.7                        | One sitemap per site, built from the `site` URL that `defineSite()` sets.                                                |
-| Language                    | JavaScript, ESM                               | No TypeScript here. The config files are `.mjs`, everything else is `.js` or `.astro`.                                   |
-| Linting                     | ESLint 9 with `eslint-plugin-astro` 1.7       | Version 1 is the last line that doesn't require the typescript-eslint packages as peers.                                 |
-| Formatting                  | Prettier 3.9 with `prettier-plugin-astro` 1.0 | Without the plugin, Prettier skips `.astro` files.                                                                       |
-| Bundler                     | Vite, via Astro                               | Where the Tailwind plugin attaches.                                                                                      |
+| Layer                       | Technology                                    | Why it's here                                                                                                                      |
+| --------------------------- | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Package manager and runtime | Bun 1.4                                       | Installs the workspace and runs the scripts. Its isolated installs give each app only what it declares.                            |
+| Task runner                 | Turborepo 2.10                                | Builds nine apps in one command and caches the ones that didn't change.                                                            |
+| Framework                   | Astro 7                                       | Static HTML per site with no client JavaScript shipped by default.                                                                 |
+| Styling                     | Tailwind CSS 4                                | Loaded through `@tailwindcss/vite`. The old `@astrojs/tailwind` integration is deprecated and its peers stop at Astro 5.           |
+| Sitemaps                    | `@astrojs/sitemap` 3.7                        | One sitemap per site, built from the `site` URL that `defineSite()` sets.                                                          |
+| Database                    | MongoDB                                       | Where anything dynamic goes when I add it. Nothing uses one today, so there's no driver installed and no connection string to set. |
+| Language                    | JavaScript, ESM                               | No TypeScript here. The config files are `.mjs`, everything else is `.js` or `.astro`.                                             |
+| Linting                     | ESLint 9 with `eslint-plugin-astro` 1.7       | Version 1 is the last line that doesn't require the typescript-eslint packages as peers.                                           |
+| Formatting                  | Prettier 3.9 with `prettier-plugin-astro` 1.0 | Without the plugin, Prettier skips `.astro` files.                                                                                 |
+| Bundler                     | Vite, via Astro                               | Where the Tailwind plugin attaches.                                                                                                |
 
 ## Screenshots
 
@@ -165,10 +170,15 @@ have real content, at which point the chrome moves into `packages/site`.
 ## Contributing
 
 This is my personal site, so I'm not looking for feature work. If you spot
-something broken, open an issue. If you want to borrow the registry pattern for
-your own multi-domain setup, take it.
+something broken, open an issue.
+
+The code is readable but it isn't reusable. See the license below before you
+copy anything out of it.
 
 ## License
 
-There's no license file in this repo yet, so default copyright applies and I
-haven't granted any reuse rights. I'll add one.
+Copyright 2026 Jason Aaren Lenz, all rights reserved. See [LICENSE](LICENSE).
+
+You can read the code and clone it to read it. You can't use, copy, modify or
+redistribute any of it, and it isn't available as training data for machine
+learning models. If you want to do something with it, ask me first.
