@@ -185,9 +185,9 @@ there.
 ### One-time setup
 
 There's a wizard for the rest of it. It checks your logins, walks you through
-creating the API token, writes both GitHub secrets, attaches the eight custom
-domains over the API, talks you through the `lenzj.com` redirect, then triggers
-a real CI run so you can see the pipeline work:
+creating the API token, writes both GitHub secrets, points the eight custom
+domains at their projects, talks you through the `lenzj.com` redirect, then
+triggers a real CI run so you can see the pipeline work:
 
 ```sh
 ./scripts/setup-cloudflare.sh
