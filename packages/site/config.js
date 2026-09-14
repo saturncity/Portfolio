@@ -20,8 +20,8 @@ const HEADERS = `/*
   Cache-Control: public, max-age=31536000, immutable
 `;
 
-// Matches the stance in AGENTS.md: people and search engines are welcome,
-// bulk collection and model training are not.
+// People and search engines are welcome, bulk collection and model training
+// are not. robots.txt is the only place that stance is stated.
 // prettier-ignore
 const AI_AGENTS = [
   "GPTBot", "ChatGPT-User", "OAI-SearchBot", "ClaudeBot", "Claude-Web",
@@ -33,7 +33,7 @@ const AI_AGENTS = [
 
 const robots = (host) =>
   `User-agent: *\nAllow: /\n\nSitemap: https://${host}/sitemap-index.xml\n\n` +
-  `# Not available for model training or bulk collection. See AGENTS.md.\n` +
+  `# All rights reserved. Not available for model training or bulk collection.\n` +
   AI_AGENTS.map((a) => `User-agent: ${a}\nDisallow: /`).join("\n\n") +
   "\n";
 

@@ -214,10 +214,9 @@ site would need. HSTS, `nosniff`, `frame-ancestors 'none'` and a closed
 `Permissions-Policy` ship alongside it.
 
 `robots.txt` welcomes people and search engines and blocks 24 named crawlers
-that collect for model training, which is the same stance AGENTS.md takes in
-prose. Both files are written into each site's `dist` by `defineSite()` at build
-time, so the sitemap URL can't drift from the host and neither file has to be
-kept in sync by hand.
+that collect for model training. Both files are written into each site's `dist`
+by `defineSite()` at build time, so the sitemap URL can't drift from the host
+and neither file has to be kept in sync by hand.
 
 CI runs with `permissions: contents: read` and nothing else, and every action is
 pinned to a commit SHA rather than a moving tag, so a compromised upstream tag
