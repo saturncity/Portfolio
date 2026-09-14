@@ -5,12 +5,6 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# What the Actions tab shows for each run, instead of just the commit subject.
-run-name: >-
-  ${{ github.event_name == 'workflow_dispatch'
-      && 'Deploy all sites (manual)'
-      || format('Deploy all sites · {0}', github.event.head_commit.message) }}
-
 # The job only reads the repo and pushes to Cloudflare. It never writes back
 # to GitHub, so the token gets nothing else.
 permissions:
