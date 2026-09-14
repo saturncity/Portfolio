@@ -5,6 +5,12 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# What the Actions tab shows for each run, instead of just the commit subject.
+run-name: >-
+  ${{ github.event_name == 'workflow_dispatch'
+      && 'Deploy all sites (manual)'
+      || format('Deploy all sites · {0}', github.event.head_commit.message) }}
+
 # The job only reads the repo and pushes to Cloudflare. It never writes back
 # to GitHub, so the token gets nothing else.
 permissions:
@@ -18,6 +24,7 @@ concurrency:
 
 jobs:
   deploy:
+    name: Build and deploy every site
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -46,16 +53,37 @@ jobs:
         run: |
           set -euo pipefail
           if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
-            echo "::notice::CLOUDFLARE_API_TOKEN is not set, so nothing was deployed. The build above still ran. See the Deploying section of the README for the one-time setup."
+            {
+              echo "### Nothing deployed"
+              echo
+              echo "\`CLOUDFLARE_API_TOKEN\` is not set, so the deploy step was skipped."
+              echo "Everything before it (install, lint, format, build) still ran."
+              echo "Run \`./scripts/setup-cloudflare.sh\` to finish the setup."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "::notice::CLOUDFLARE_API_TOKEN is not set, so nothing was deployed."
             exit 0
           fi
           node scripts/deploy-targets.mjs > /tmp/targets
-          cat /tmp/targets
+          {
+            echo "### Deployed \`${GITHUB_SHA:0:7}\` to every site"
+            echo
+            echo "| Site | Live at | This deployment |"
+            echo "| --- | --- | --- |"
+          } >> "$GITHUB_STEP_SUMMARY"
+          count=0
           while read -r key project host; do
-            echo "::group::$project"
+            echo "::group::$project -> $host"
             bunx wrangler pages deploy "apps/$key/dist" \
               --project-name="$project" \
               --branch=main \
-              --commit-dirty=true
+              --commit-dirty=true > /tmp/out 2>&1 || { cat /tmp/out; exit 1; }
+            cat /tmp/out
+            url=$(grep -oE 'https://[a-z0-9.-]+\.pages\.dev' /tmp/out | tail -1)
+            echo "| \`$key\` | [$host](https://$host) | [preview]($url) |" >> "$GITHUB_STEP_SUMMARY"
+            count=$((count + 1))
             echo "::endgroup::"
           done < /tmp/targets
+          {
+            echo
+            echo "$count sites, all from commit \`${GITHUB_SHA:0:7}\`."
+          } >> "$GITHUB_STEP_SUMMARY"
