@@ -5,6 +5,11 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# The job only reads the repo and pushes to Cloudflare. It never writes back
+# to GitHub, so the token gets nothing else.
+permissions:
+  contents: read
+
 # One deploy at a time, so two pushes can't interleave and leave the
 # network half on one commit and half on another.
 concurrency:
@@ -15,14 +20,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - uses: oven-sh/setup-bun@v2
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: 1.4.2
 
       # Bun runs the scripts, but Astro's CLI is a node shebang.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version-file: .node-version
 

@@ -227,6 +227,23 @@ DNS edit.
 `lenzj.com` redirects to `lenzj.me` through a Cloudflare Redirect Rule on the
 `lenzj.com` zone. Nothing in this repo configures it and it isn't set up yet.
 
+## Security
+
+The sites are static HTML with one stylesheet: no JavaScript, no inline styles,
+no images. That lets `_headers` default the content security policy to `'none'`
+and open only `style-src 'self'`, rather than the permissive policy a scripted
+site would need. HSTS, `nosniff`, `frame-ancestors 'none'` and a closed
+`Permissions-Policy` ship alongside it.
+
+`robots.txt` welcomes people and search engines and blocks 24 named crawlers
+that collect for model training, which is the same stance AGENTS.md takes in
+prose. Both files are generated per site by `scripts/gen-public.mjs`, so the
+sitemap URL always matches the host. Re-run it after editing the registry.
+
+CI runs with `permissions: contents: read` and nothing else, and every action is
+pinned to a commit SHA rather than a moving tag, so a compromised upstream tag
+can't change what runs. Dependabot moves those pins monthly.
+
 ## Contributing
 
 This is my personal site, so I'm not looking for feature work. If you spot
